@@ -56,3 +56,6 @@ if(ord(x) < 48 or ord(x) > 57):
     print("It is a not Number")
 else:
     print("It is  a Number")
+import xgboost
+
+print(xgboost.__version__)
