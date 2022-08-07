@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+
+"""ReadFile function : readfile from input. outpunt: data is read, name of file"""
 def readFile():
     print("Enter a filename:")
     fileName = input()
@@ -11,6 +13,8 @@ def readFile():
         print("Sorry, I can't find this filename")
         return False
     return data,fileName
+
+"""Analysis Function : analyze data check whether flow rule. Output vaild.csv"""
 def analysis(data):
     print("**** ANALYZING ****")
     print('Total line of data: ',data.shape[0])
@@ -24,9 +28,11 @@ def analysis(data):
     for i in range(data.shape[0]):
         k = data.iloc[i]
         k = k.values.tolist()
+        # k is list of each row
         for j in k:
             jSplit = j.split(',')
             for i in range(1,len(jSplit[0])):
+                # check number or not
                 if ord(jSplit[0][i]) < 48 or ord(jSplit[0][i]) > 57:
                     listWrongName.append(j)
                     inValidLine += 1
@@ -34,7 +40,6 @@ def analysis(data):
                 listWrongName.append(j)
                 inValidLine +=1
             else:
-                '''k la list ['aaa','1','2']'''
                 for j in k:
                     counT = 0
                     for o in j:
@@ -59,8 +64,10 @@ def analysis(data):
     print('Total valid lines of data: ', validLine)
     print('Total invalid lines of data:', inValidLine)
     csvValid = pd.DataFrame(listValid)
-    # index = False không tạo thêm index.
-    csvValid.to_csv('valid.csv',index=False)
+    # Important : index = False không tự tạo thêm index.
+    csvValid.to_csv('valid.csv',mode='w', index=False)
+
+"""Cal function : calculte point by Name, output : point array, new : array """
 def cal():
     answer_key = "B,A,D,D,C,B,D,A,C,C,D,B,A,B,A,C,B,D,A,C,A,A,B,D,D"
     lstAnswer = answer_key.split(",")
@@ -68,13 +75,8 @@ def cal():
     dataCsv = pd.read_csv('valid.csv', sep=" ", names=['Name'])
     # split name colum
     new = dataCsv["Name"].str.split(",", expand=True)
-    # new = pd.DataFrame(new)
     new = pd.DataFrame(new[1:])
-    # new3 = pd.read_csv(new2,index_col=0)
-    print('newold')
-    print(new)
-    # print('newNew')
-    # print(new2)
+    # create empty array
     pointArray = np.empty([0,25],dtype = int)
     # duyệt từng row
     for i in range (0,new.shape[0]):
@@ -83,32 +85,27 @@ def cal():
         point = 0
         # compare each value
         for rs in listVal[1:]:
-            if rs == "" or rs =='"':
+            if rs == "":
                 pass
-            # rs[0] để loại bỏ ký tự ' " ' ở cuối cùng
-            elif rs[0] == lstAnswer[k]:
+            elif rs == lstAnswer[k]:
                 point +=4
             else:
                 point -=1
             k +=1
         pointArray = np.append(pointArray,point)
-    # print(pointArray)
     print('Mean (average) score: ',round(np.average(pointArray),2))
     print('Highest score: ',round(np.max(pointArray),2))
     print('Lowest score: ', round(np.min(pointArray), 2))
     print('Range of scores: ',round(np.max(pointArray)-np.min(pointArray),2))
     print('Median score: ',round(np.median(pointArray)))
     return pointArray,new
+
+"""save function : save file to file.txt, input : point, scvValid , file name input"""
 def save(pointArrary,csvValid,filename):
-    print('save')
-    print(pointArrary)
-    print(csvValid)
     strFile = str(filename) +'_grades.txt'
     with open(strFile,mode='w') as writeFile:
-        strWrite = str()
         for i in range(0,csvValid.shape[0]):
             strWrite = str(csvValid[0][i+1])+","+str(pointArrary[i]) +"\n"
-            print(strWrite)
             writeFile.write(strWrite)
 
 
